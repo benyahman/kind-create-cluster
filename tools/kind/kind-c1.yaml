@@ -4,5 +4,4 @@ networking:
   podSubnet: "172.18.10.0/24"
 nodes:
 # the control plane node config
-
 - role: control-plane
