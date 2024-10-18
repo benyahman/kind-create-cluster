@@ -5,13 +5,15 @@ abspath=$(cd "$(dirname "$0")";pwd)
 source $abspath/config/config.env
 
 FILE_PATH_kind=$abspath/tools/kind/kind-c1.yaml
+FILE_PATH_istio="$abspath/tools/istio/certs/cluster1.yaml"
+FOLDER_PATH_certs="$abspath/tools/istio/certs"
 
 echo "kind version = $kind_version"
 echo "istio version = $istio_version"
 echo "kiali version = $kiali_version"
 
 pretask(){  
-    echo "pretask start .."
+    echo "start pretask .."
     cd $abspath/download    
     # istio
     wget "https://github.com/istio/istio/releases/download/$istio_version/istio-$istio_version-linux-amd64.tar.gz" -O - | tar -xz
@@ -23,7 +25,7 @@ pretask(){
 }
 
 delete_kind_cluster(){
-echo "delete_kind_cluster .."
+echo "start delete_kind_cluster .."
 CLUSTERS=$(kind get clusters)
     if [ -n "$kind_version" ] ; then       
         if [ -n "$CLUSTERS" ]; then     
@@ -38,7 +40,7 @@ CLUSTERS=$(kind get clusters)
     fi
 }
 create_kind_cluster(){
-echo "create_kind_cluster .."
+    echo "start create_kind_cluster .."
     if [ -f "$FILE_PATH_kind" ]; then
         echo "文件 $FILE_PATH_kind 存在，继续执行操作..."
         #kind create cluster --image=kindest/node:v1.24.0 --name=c1 --config=$FILE_PATH_kind
@@ -48,12 +50,36 @@ echo "create_kind_cluster .."
         exit 1
     fi
 }
+istio(){
+    echo "start istio .."
+    export CTX_CLUSTER1=kind-c1
+    if [ -f "$FILE_PATH_istio" ]; then 
+       echo "文件 $FILE_PATH_istio 存在..."
+       cd $abspath/download/istio-$istio_version
+    #    export PATH="$PATH:/usr/local/istio-$istio_version/bin"
+       export PATH=$abspath/download/istio-$istio_version/bin:$PATH
+       pushd $FOLDER_PATH_certs
+       kubectl --context=$CTX_CLUSTER1 create namespace istio-system
+       kubectl --context=$CTX_CLUSTER1 create secret generic cacerts -n istio-system \
+          --from-file=cluster1/ca-cert.pem \
+          --from-file=cluster1/ca-key.pem \
+          --from-file=cluster1/root-cert.pem \
+          --from-file=cluster1/cert-chain.pem
+       istioctl install --context="${CTX_CLUSTER1}"  -y -f $FILE_PATH_istio
+       popd
+    else
+      echo "文件 $FILE_PATH_istio 不存在，脚本终止。"
+      exit 1
+    fi
+
+}
 
 
 #program start
 if [[ -n "$istio_version" && -n "$kiali_version" ]]; then  
   pretask
-  delete_kind_cluster
-  create_kind_cluster
+#   delete_kind_cluster
+#   create_kind_cluster
+  istio
 fi
 exit 0
