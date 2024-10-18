@@ -73,6 +73,7 @@ istio(){
       echo "文件 $FILE_PATH_istio 不存在，终止。"
       exit 1
     fi
+
 }
 
 clear(){
