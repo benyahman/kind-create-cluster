@@ -43,7 +43,7 @@ echo "create_kind_cluster .."
 if [ -f "$FILE_PATH_kind" ]; then
     echo "文件 $FILE_PATH_kind 存在，继续执行操作..."
     #kind create cluster --image=kindest/node:v1.24.0 --name=c1 --config=$FILE_PATH_kind
-    kind create cluster  --name=c1 --config=$FILE_PATH_kind
+    kind create cluster --image=kindest/node:v1.24.0 --name=c1 --config=$FILE_PATH_kind
 else
     echo "文件 $FILE_PATH_kind 不存在，脚本终止。"
     exit 1
