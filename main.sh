@@ -4,8 +4,10 @@ set -e
 abspath=$(cd "$(dirname "$0")";pwd)
 source $abspath/config/config.env
 
+
 FILE_PATH_kind=$abspath/tools/kind/kind-c1.yaml
-FILE_PATH_istio="$abspath/tools/istio/certs/cluster1.yaml"
+FILE_PATH_istio=$abspath/tools/istio/certs/cluster1.yaml
+FOLDER_PATH_download=$abspath/download
 FOLDER_PATH_certs="$abspath/tools/istio/certs"
 
 echo "kind version = $kind_version"
@@ -13,8 +15,8 @@ echo "istio version = $istio_version"
 echo "kiali version = $kiali_version"
 
 pretask(){  
-    echo "start pretask .."
-    cd $abspath/download    
+    echo "start pretask() .."
+    cd $FOLDER_PATH_download    
     # istio
     wget "https://github.com/istio/istio/releases/download/$istio_version/istio-$istio_version-linux-amd64.tar.gz" -O - | tar -xz
     
@@ -25,7 +27,7 @@ pretask(){
 }
 
 delete_kind_cluster(){
-echo "start delete_kind_cluster .."
+echo "start delete_kind_cluster() .."
 CLUSTERS=$(kind get clusters)
     if [ -n "$kind_version" ] ; then       
         if [ -n "$CLUSTERS" ]; then     
@@ -40,10 +42,9 @@ CLUSTERS=$(kind get clusters)
     fi
 }
 create_kind_cluster(){
-    echo "start create_kind_cluster .."
+    echo "start create_kind_cluster() .."
     if [ -f "$FILE_PATH_kind" ]; then
         echo "文件 $FILE_PATH_kind 存在，继续执行操作..."
-        #kind create cluster --image=kindest/node:v1.24.0 --name=c1 --config=$FILE_PATH_kind
         kind create cluster  --name=c1 --config=$FILE_PATH_kind
     else
         echo "文件 $FILE_PATH_kind 不存在，脚本终止。"
@@ -51,7 +52,7 @@ create_kind_cluster(){
     fi
 }
 istio(){
-    echo "start istio .."
+    echo "start istio() .."
     export CTX_CLUSTER1=kind-c1
     if [ -f "$FILE_PATH_istio" ]; then 
        echo "文件 $FILE_PATH_istio 存在..."
@@ -73,13 +74,18 @@ istio(){
     fi
 
 }
+clear(){
+    echo "start clear() .."
+    rm -rf $FOLDER_PATH_download/*
+}
 
 
 #program start
 if [[ -n "$istio_version" && -n "$kiali_version" ]]; then  
   pretask
-#   delete_kind_cluster
-#   create_kind_cluster
+  delete_kind_cluster
+  create_kind_cluster
   istio
+  clear
 fi
 exit 0
