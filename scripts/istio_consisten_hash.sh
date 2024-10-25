@@ -4,8 +4,7 @@ set -e
 abspath=$(cd "$(dirname "$0")/.."; pwd)
 source $abspath/config/config.env
 
-main_task(){    
-    echo "context_count="$context_count
+main_task(){   
     kubectl create --context="${CTX_CLUSTER1}" namespace sample3
     kubectl label --context="${CTX_CLUSTER1}" namespace sample3 \
         istio-injection=enabled
@@ -18,19 +17,13 @@ main_task(){
     kubectl apply --context="${CTX_CLUSTER1}" \
     -f $FOLDER_PATH_istio/samples/sleep/sleep.yaml -n sample3 
 
-    echo "sleep 60"
-    sleep 60
-
-    kubectl get pod --context="${CTX_CLUSTER1}" -n sample3 -l app=helloworld
-    kubectl get pod --context="${CTX_CLUSTER1}" -n sample3 -l app=sleep
-
-    # Verifying Cross-Cluster Traffic
-    for i in $(seq 1 10); do
-    kubectl exec --context="${CTX_CLUSTER1}" -n sample3 -c sleep \
-        "$(kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l \
-        app=sleep -o jsonpath='{.items[0].metadata.name}')" \
-        -- curl -sS helloworld.sample3:5000/hello
-    done  
+    kubectl --context="${CTX_CLUSTER1}"  scale deployment helloworld-v1 --replicas=2 -n sample3
+    
+    if [[ "$istio_version" == "1.13.5" ]]; then
+        kubectl --context=$CTX_CLUSTER1 -n sample3 apply -f  $FOLDER_PATH_samples/consistent_dr_v1_13_5.yaml
+    else
+        kubectl --context=$CTX_CLUSTER1 -n sample3 apply -f  $FOLDER_PATH_samples/consistent_dr_v1_23_0.yaml
+    fi
 }
 
 istiod_status=$(kubectl get pod -n istio-system -l app=istiod -o jsonpath='{.items[0].status.phase}')
@@ -40,7 +33,7 @@ namespace_exists=$(kubectl get ns sample3 --ignore-not-found)
 if [[ "$istiod_status" == "Running" && -z "$namespace_exists" ]]; then
     main_task
 else
-    if [[ "$istiod_status" != "Running" ]]; then
+    if [[ "$istio_version" == "1.13.5" ]]; then
         echo "Waiting for istiod Pod to be Running in the istio-system namespace..."
     fi
     if [[ -n "$namespace_exists" ]]; then
