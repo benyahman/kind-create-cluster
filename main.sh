@@ -6,14 +6,15 @@ source $abspath/config/config.env
 
 main_task(){
   bash $abspath/scripts/create_cluster.sh
+  bash $abspath/scripts/istio_sample_create.sh
 }
+
 
 clear(){
     echo "start clear() .."
     rm -rf $FOLDER_PATH_download/*    
     echo "end clear() .."
 }
-
 
 if [[ -n "$istio_version" && -n "$kiali_version" ]]; then    
     main_task
