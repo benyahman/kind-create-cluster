@@ -3,23 +3,26 @@
 set -e
 abspath=$(cd "$(dirname "$0")";pwd)
 source $abspath/config/config.env
+filtered_version_kiali=$(echo "$kiali_version" | tr -d 'v')
+echo "start pretask() .."
+echo "kind version  = $kind_version"
+echo "istio version = $istio_version"
+echo "kiali version = $kiali_version"
+echo "filtered_version_kiali  version = $filtered_version_kiali"
 
 FILE_PATH_kind=$abspath/tools/kind/kind-c1.yaml
 FILE_PATH_istio=$abspath/tools/istio/certs/cluster1-$istio_version.yaml
-FILE_PATH_kiali="$abspath/tools/kiali/$kiali_version/helm-charts/kiali-operator/values.yaml"
+FILE_PATH_kiali="$abspath/tools/kiali/helm-charts-$filtered_version_kiali/kiali-operator/values.yaml"
+
 FILE_PATH_prometheus="$abspath/download/istio-$istio_version/samples/addons/prometheus.yaml"
 FOLDER_PATH_download=$abspath/download
 FOLDER_PATH_certs="$abspath/tools/istio/certs"
-FOLDER_PATH_kiali="$abspath/tools/kiali/$kiali_version/helm-charts/kiali-operator"
+FOLDER_PATH_kiali="$abspath/tools/kiali/helm-charts-$filtered_version_kiali/kiali-operator"
 
 print_kind_version=v$(kind --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-available_processes=("main" "pretask" "delete_kind_cluster" "create_kind_cluster" "istio" "prometheus" "kiali" "clear")
+available_processes=("main" "pretask" "delete_kind_cluster" "create_kind_cluster" "istio" "prometheus" "kiali" "clear_download")
 
 pretask(){
-    echo "start pretask() .."
-    echo "kind version  = $kind_version"
-    echo "istio version = $istio_version"
-    echo "kiali version = $kiali_version"
     # download istio
     if [ -z "$(ls -A "$FOLDER_PATH_download" 2>/dev/null)" ]; then
         echo "start istio download"
@@ -106,9 +109,6 @@ kiali(){
       docker pull quay.io/kiali/kiali:$kiali_version
       kind load docker-image quay.io/kiali/kiali-operator:$kiali_version --name c1
       kind load docker-image quay.io/kiali/kiali:$kiali_version --name c1
-      echo "start sleep 10 .."
-      sleep 10
-      echo "end sleep 10.."
       helm install --kube-context=kind-c1  --namespace=istio-system --create-namespace kiali-operator-1  $FOLDER_PATH_kiali
     else
       echo "文件 $FILE_PATH_kiali 不存在，终止。"
@@ -116,7 +116,7 @@ kiali(){
     echo "end kiali() .."
 }
 
-clear(){
+clear_download(){
     echo "start clear() .."
     rm -rf $FOLDER_PATH_download/*
     echo "end clear() .."
@@ -128,8 +128,8 @@ main(){
   create_kind_cluster
   istio
   prometheus
-  #kiali    
-  clear
+  kiali    
+  clear_download
 }
 
 if [[ $# -eq 0 ]]; then

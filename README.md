@@ -15,3 +15,7 @@ kind load docker-image quay.io/kiali/kiali-operator:v1.87.0 --name c1
 kind load docker-image quay.io/kiali/kiali:v1.87.0 --name c1
 
 sudo code --no-sandbox --user-data-dir="/path/to/your/directory"
+
+istioctl  --context kind-c1 dashboard prometheus
+kubectl --context kind-c1  port-forward svc/kiali -n istio-system 20001:20001
+http://localhost:20001/kiali
