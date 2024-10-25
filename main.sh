@@ -105,8 +105,9 @@ kiali(){
     if [ -f "$FILE_PATH_kiali" ]; then
       docker pull quay.io/kiali/kiali:$kiali_version
       kind load docker-image quay.io/kiali/kiali:$kiali_version --name c1
-      echo "sleep 20  .."
-      sleep 20 
+      echo "start sleep 30 .."
+      sleep 30 
+      echo "end sleep 30 .."
       helm install --kube-context=kind-c1  --namespace=istio-system --create-namespace kiali-operator-1  $FOLDER_PATH_kiali
     else
       echo "文件 $FILE_PATH_kiali 不存在，终止。"
