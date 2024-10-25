@@ -6,7 +6,7 @@ source $abspath/config/config.env
 
 main_task(){
   bash $abspath/scripts/create_cluster.sh
-  bash $abspath/scripts/istio_sample_create.sh
+  bash $abspath/scripts/istio_create_sample.sh
 }
 
 

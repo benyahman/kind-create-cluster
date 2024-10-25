@@ -19,3 +19,6 @@ sudo code --no-sandbox --user-data-dir="/path/to/your/directory"
 istioctl  --context kind-c1 dashboard prometheus
 kubectl --context kind-c1  port-forward svc/kiali -n istio-system 20001:20001
 http://localhost:20001/kiali
+
+# 強制刪除namespace
+k1 get namespace istio-system -o json | jq '.spec.finalizers=[]' | k1 replace --raw "/api/v1/namespaces/istio-system/finalize" -f -
