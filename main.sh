@@ -128,7 +128,7 @@ main(){
   create_kind_cluster
   istio
   prometheus
-  kiali    
+  #kiali    
   clear
 }
 
