@@ -40,6 +40,5 @@ else
         echo "Namespace 'sample' already exists."
     fi
 fi
-
 exit 0
 
