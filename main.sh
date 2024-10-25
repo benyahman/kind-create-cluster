@@ -90,9 +90,9 @@ clear(){
 # main() start
 if [[ -n "$istio_version" && -n "$kiali_version" ]]; then
   pretask
-#   delete_kind_cluster
-#   create_kind_cluster
-#   istio
-#   clear
+  delete_kind_cluster
+  create_kind_cluster
+  istio
+  clear
 fi
 exit 0
