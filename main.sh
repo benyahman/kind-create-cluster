@@ -1,9 +1,11 @@
 #!/bin/bash
 
 set -e
-abspath=$(cd "$(dirname "$0")";pwd)
 source $abspath/config/config.env
+
+abspath=$(cd "$(dirname "$0")";pwd)
 filtered_version_kiali=$(echo "$kiali_version" | tr -d 'v')
+
 echo "start pretask() .."
 echo "kind version  = $kind_version"
 echo "istio version = $istio_version"
@@ -20,7 +22,7 @@ FOLDER_PATH_certs="$abspath/tools/istio/certs"
 FOLDER_PATH_kiali="$abspath/tools/kiali/helm-charts-$filtered_version_kiali/kiali-operator"
 
 print_kind_version=v$(kind --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-available_processes=("main" "pretask" "delete_kind_cluster" "create_kind_cluster" "istio" "prometheus" "kiali" "clear_download")
+available_processes=("main" "pretask" "create_kind_cluster" "istio" "prometheus" "kiali" "clear")
 
 pretask(){
     # download istio
@@ -116,20 +118,20 @@ kiali(){
     echo "end kiali() .."
 }
 
-clear_download(){
+clear(){
     echo "start clear() .."
     rm -rf $FOLDER_PATH_download/*
+    delete_kind_cluster
     echo "end clear() .."
 }
 
 main(){
-  pretask
-  delete_kind_cluster
+  pretask  
   create_kind_cluster
   istio
   prometheus
   kiali    
-  clear_download
+  clear
 }
 
 if [[ $# -eq 0 ]]; then
