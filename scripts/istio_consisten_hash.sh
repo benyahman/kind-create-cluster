@@ -33,7 +33,7 @@ namespace_exists=$(kubectl get ns sample3 --ignore-not-found)
 if [[ "$istiod_status" == "Running" && -z "$namespace_exists" ]]; then
     main_task
 else
-    if [[ "$istio_version" == "1.13.5" ]]; then
+    if [[ "$istiod_status" != "Running" ]]; then
         echo "Waiting for istiod Pod to be Running in the istio-system namespace..."
     fi
     if [[ -n "$namespace_exists" ]]; then
