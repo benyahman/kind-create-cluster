@@ -4,8 +4,8 @@ fullnameOverride: ""
 image: # see: https://quay.io/repository/kiali/kiali-operator?tab=tags
   repo: quay.io/kiali/kiali-operator
   tag: v1.49.0
-  digest: "" # use "sha256" if tag is a sha256 hash (do NOT prefix this value with a "@")
-  pullPolicy: Always
+  # digest: "" # use "sha256" if tag is a sha256 hash (do NOT prefix this value with a "@")
+  pullPolicy: IfNotPresent
   pullSecrets: []
 
 # Deployment options for the operator pod.
@@ -86,6 +86,3 @@ cr:
       image_pull_policy: "IfNotPresent"
     auth:
       strategy: anonymous
-    server:
-      profiler:
-        enabled: true
