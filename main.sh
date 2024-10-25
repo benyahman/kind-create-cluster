@@ -9,21 +9,28 @@ FILE_PATH_kind=$abspath/tools/kind/kind-c1.yaml
 FILE_PATH_istio=$abspath/tools/istio/certs/cluster1.yaml
 FOLDER_PATH_download=$abspath/download
 FOLDER_PATH_certs="$abspath/tools/istio/certs"
+print_kind_version=v$(kind --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
 
 echo "kind version = $kind_version"
 echo "istio version = $istio_version"
 echo "kiali version = $kiali_version"
 
-pretask(){  
+pretask(){    
     echo "start pretask() .."
-    cd $FOLDER_PATH_download    
-    # istio
-    wget "https://github.com/istio/istio/releases/download/$istio_version/istio-$istio_version-linux-amd64.tar.gz" -O - | tar -xz
-    
-    # kind
-    [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/$kind_version/kind-linux-amd64    
-    chmod +x ./kind
-    sudo mv ./kind /usr/local/bin/kind
+    # download istio
+    if [ -z "$(ls -A "$FOLDER_PATH_download" 2>/dev/null)" ]; then
+        echo "start istio download"
+        cd $FOLDER_PATH_download        
+        wget "https://github.com/istio/istio/releases/download/$istio_version/istio-$istio_version-linux-amd64.tar.gz" -O - | tar -xz
+    fi 
+
+    # download kind
+    if [ "$print_kind_version" != "$kind_version" ]; then
+        echo "start kind download"
+        [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/$kind_version/kind-linux-amd64    
+        chmod +x ./kind
+        sudo mv ./kind /usr/local/bin/kind
+    fi
 }
 
 delete_kind_cluster(){
@@ -81,11 +88,11 @@ clear(){
 }
 
 # main() start
-if [[ -n "$istio_version" && -n "$kiali_version" ]]; then  
+if [[ -n "$istio_version" && -n "$kiali_version" ]]; then
   pretask
-  delete_kind_cluster
-  create_kind_cluster
-  istio
-  clear
+#   delete_kind_cluster
+#   create_kind_cluster
+#   istio
+#   clear
 fi
 exit 0
