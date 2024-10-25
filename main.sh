@@ -4,19 +4,22 @@ set -e
 abspath=$(cd "$(dirname "$0")";pwd)
 source $abspath/config/config.env
 
-
 FILE_PATH_kind=$abspath/tools/kind/kind-c1.yaml
-FILE_PATH_istio=$abspath/tools/istio/certs/cluster1.yaml
+FILE_PATH_istio=$abspath/tools/istio/certs/cluster1-$istio_version.yaml
+FILE_PATH_kiali="$abspath/tools/kiali/$kiali_version/helm-charts/kiali-operator/values.yaml"
+FILE_PATH_prometheus="$abspath/download/istio-$istio_version/samples/addons/prometheus.yaml"
 FOLDER_PATH_download=$abspath/download
 FOLDER_PATH_certs="$abspath/tools/istio/certs"
+FOLDER_PATH_kiali="$abspath/tools/kiali/$kiali_version/helm-charts/kiali-operator"
+
 print_kind_version=v$(kind --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+available_processes=("main" "pretask" "delete_kind_cluster" "create_kind_cluster" "istio" "prometheus" "kiali" "clear")
 
-echo "kind version = $kind_version"
-echo "istio version = $istio_version"
-echo "kiali version = $kiali_version"
-
-pretask(){    
+pretask(){
     echo "start pretask() .."
+    echo "kind version  = $kind_version"
+    echo "istio version = $istio_version"
+    echo "kiali version = $kiali_version"
     # download istio
     if [ -z "$(ls -A "$FOLDER_PATH_download" 2>/dev/null)" ]; then
         echo "start istio download"
@@ -31,6 +34,7 @@ pretask(){
         chmod +x ./kind
         sudo mv ./kind /usr/local/bin/kind
     fi
+    echo "end pretask() .."
 }
 
 delete_kind_cluster(){
@@ -47,6 +51,7 @@ delete_kind_cluster(){
             done
             fi
         fi
+    echo "end delete_kind_cluster() .."
 }
 
 create_kind_cluster(){
@@ -58,6 +63,7 @@ create_kind_cluster(){
         echo "文件 $FILE_PATH_kind 不存在，终止。"
         exit 1
     fi
+    echo "end create_kind_cluster() .."
 }
 
 istio(){
@@ -80,19 +86,67 @@ istio(){
       echo "文件 $FILE_PATH_istio 不存在，终止。"
       exit 1
     fi
+    echo "end istio() .."
+}
+
+prometheus(){
+    echo "start prometheus() .."
+    if [ -f "$FILE_PATH_prometheus" ]; then 
+       echo "文件 $FILE_PATH_prometheus 存在..."
+       kubectl --context=$CTX_CLUSTER1 apply  -f $FILE_PATH_prometheus
+    else
+      echo "文件 $FILE_PATH_prometheus 不存在，终止。"
+    fi
+    echo "end prometheus() .."
+}
+
+kiali(){
+    echo "start kiali() .."
+    if [ -f "$FILE_PATH_kiali" ]; then
+      docker pull quay.io/kiali/kiali:$kiali_version
+      kind load docker-image quay.io/kiali/kiali:$kiali_version --name c1      
+      helm install --kube-context=kind-c1  --namespace=istio-system --create-namespace kiali-operator-1  $FOLDER_PATH_kiali
+    else
+      echo "文件 $FILE_PATH_kiali 不存在，终止。"
+    fi
+    echo "end kiali() .."
 }
 
 clear(){
     echo "start clear() .."
     rm -rf $FOLDER_PATH_download/*
+    echo "end clear() .."
 }
 
-# main() start
-if [[ -n "$istio_version" && -n "$kiali_version" ]]; then
+main(){
   pretask
   delete_kind_cluster
   create_kind_cluster
   istio
+  prometheus
+  kiali    
   clear
+}
+
+if [[ $# -eq 0 ]]; then
+    echo "Usage: $0 <process_name>"
+    echo "Available processes: ${available_processes[*]}"
+    exit 1
+fi
+
+input_process="$1"
+echo "Available processes: ${available_processes[*]}"
+echo $input_process
+
+if [[ " ${available_processes[*]} " == *" $input_process "* ]]; then
+    if [[ -n "$istio_version" && -n "$kiali_version" ]]; then
+        "$input_process"
+    else
+        echo "Error: istio_version and kiali_version must be set."
+    fi
+else
+    echo "Error: Invalid process name '$input_process'."
+    echo "Available processes: ${available_processes[*]}"
+    exit 1
 fi
 exit 0

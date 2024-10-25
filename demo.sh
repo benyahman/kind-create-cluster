@@ -64,12 +64,12 @@ if [ -n "$KIND_VERSION" ] ; then
        istioctl install --context="${CTX_CLUSTER1}"  -y -f cluster1.yaml
        popd
     else
-      echo "文件 $FILE_PATH_istio 不存在，脚本终止。"
+      echo "$FILE_PATH_istio is not exist and stop"
       exit 1
     fi
 
     # step3 : kiali operator install
-    echo "开始执行，等待10秒..."
+    echo "start and wait 10 seconds..."
     sleep 10
     echo "继续执行..."
     kind load docker-image quay.io/kiali/kiali-operator:$kiali_version --name c1
@@ -79,22 +79,22 @@ if [ -n "$KIND_VERSION" ] ; then
     popd
 
     # step4 : prometheus install
-    echo "开始执行，等待10秒..."
+    echo "start and wait 10 seconds..."
     sleep 10
-    echo "继续执行..."
+    echo "keeping process..."
     pushd $FOLDER_PATH_istio
     kubectl --context=$CTX_CLUSTER1 apply  -f samples/addons/prometheus.yaml
     popd
 
     # step5 : check all pod is running
-    echo "开始执行，等待10秒..."
+    echo "start and wait 10 seconds..."
     sleep 10
-    echo "继续执行..."
+    echo "eeping process..."
     pods_status=$(kubectl --context=$CTX_CLUSTER1 get pods --all-namespaces --field-selector=status.phase!=Running)
     if [ -z "$pods_status" ]; then
-       echo "所有 Pod 都处于 Running 状态。"
+       echo "All pod is running"
     else
-       echo "以下 Pod 不在 Running 状态："
+       echo "Pod is no running as follows:"
        echo "$pods_status"
        exit 1
     fi

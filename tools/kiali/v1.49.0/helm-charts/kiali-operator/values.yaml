@@ -82,7 +82,7 @@ cr:
       accessible_namespaces:
       - '**'
       image_name: "quay.io/kiali/kiali"
-      image_version: "v1.49.0-3"
+      image_version: "v1.49.0"
       image_pull_policy: "IfNotPresent"
     auth:
       strategy: anonymous
