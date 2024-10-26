@@ -1,7 +1,8 @@
 #!/bin/bash
 
 set -e
-abspath=$(cd "$(dirname "$0")";pwd)
+# abspath=$(cd "$(dirname "$0")";pwd)
+abspath=$(cd "$(dirname "$0")/.."; pwd)
 source $abspath/config/config.env
 
 main_task(){

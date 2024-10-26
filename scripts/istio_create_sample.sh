@@ -35,26 +35,26 @@ main_task(){
       kubectl apply --context="${CTX_CLUSTER2}" \
         -f $FOLDER_PATH_istio/samples/sleep/sleep.yaml -n sample   
 
-      echo "sleep 60"
-      sleep 60
+    #   echo "sleep 60"
+    #   sleep 60
 
-      kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l app=helloworld
-      kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l app=sleep 
-      kubectl get pod --context="${CTX_CLUSTER2}" -n sample -l app=helloworld
-      kubectl get pod --context="${CTX_CLUSTER2}" -n sample -l app=sleep    
+    #   kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l app=helloworld
+    #   kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l app=sleep 
+    #   kubectl get pod --context="${CTX_CLUSTER2}" -n sample -l app=helloworld
+    #   kubectl get pod --context="${CTX_CLUSTER2}" -n sample -l app=sleep    
     # Verifying Cross-Cluster Traffic
-      for i in $(seq 1 10); do
-        kubectl exec --context="${CTX_CLUSTER1}" -n sample -c sleep \
-            "$(kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l \
-            app=sleep -o jsonpath='{.items[0].metadata.name}')" \
-            -- curl -sS helloworld.sample:5000/hello
-      done
-      for i in $(seq 1 10); do
-        kubectl exec --context="${CTX_CLUSTER2}" -n sample -c sleep \
-            "$(kubectl get pod --context="${CTX_CLUSTER2}" -n sample -l \
-            app=sleep -o jsonpath='{.items[0].metadata.name}')" \
-            -- curl -sS helloworld.sample:5000/hello
-      done
+    #   for i in $(seq 1 10); do
+    #     kubectl exec --context="${CTX_CLUSTER1}" -n sample -c sleep \
+    #         "$(kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l \
+    #         app=sleep -o jsonpath='{.items[0].metadata.name}')" \
+    #         -- curl -sS helloworld.sample:5000/hello
+    #   done
+    #   for i in $(seq 1 10); do
+    #     kubectl exec --context="${CTX_CLUSTER2}" -n sample -c sleep \
+    #         "$(kubectl get pod --context="${CTX_CLUSTER2}" -n sample -l \
+    #         app=sleep -o jsonpath='{.items[0].metadata.name}')" \
+    #         -- curl -sS helloworld.sample:5000/hello
+    #   done
   elif [[ "$cluster_mode" == "single" ]]; then
       kubectl create --context="${CTX_CLUSTER1}" namespace sample
       kubectl label --context="${CTX_CLUSTER1}" namespace sample \
@@ -68,19 +68,19 @@ main_task(){
       kubectl apply --context="${CTX_CLUSTER1}" \
         -f $FOLDER_PATH_istio/samples/sleep/sleep.yaml -n sample 
 
-      echo "sleep 60"
-      sleep 60
+    #   echo "sleep 60"
+    #   sleep 60
       
-      kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l app=helloworld
-      kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l app=sleep
+    #   kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l app=helloworld
+    #   kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l app=sleep
 
     # Verifying Cross-Cluster Traffic
-      for i in $(seq 1 10); do
-        kubectl exec --context="${CTX_CLUSTER1}" -n sample -c sleep \
-            "$(kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l \
-            app=sleep -o jsonpath='{.items[0].metadata.name}')" \
-            -- curl -sS helloworld.sample:5000/hello
-      done
+    #   for i in $(seq 1 10); do
+    #     kubectl exec --context="${CTX_CLUSTER1}" -n sample -c sleep \
+    #         "$(kubectl get pod --context="${CTX_CLUSTER1}" -n sample -l \
+    #         app=sleep -o jsonpath='{.items[0].metadata.name}')" \
+    #         -- curl -sS helloworld.sample:5000/hello
+    #   done
   else
       echo "please check agin :  $cluster_mode 。"
       exit 1
