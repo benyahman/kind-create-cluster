@@ -55,7 +55,7 @@ create_kind_cluster(){
         # 創建多集群模式下的集群
         echo "創建集群 c1 和 c2"
         kind create cluster --name=c1 --config="$FILE_PATH_kind"
-        kind create cluster --name=c2 --config="$FILE_PATH_kind"
+        kind create cluster --name=c2 --config="$FILE_PATH_kind_2"
     elif [[ "$cluster_mode" == "single" ]]; then
         # 單集群模式
         echo "創建集群 c1"
