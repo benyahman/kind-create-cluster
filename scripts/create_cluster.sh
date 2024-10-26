@@ -12,6 +12,8 @@ echo "filtered_version_kiali version="$filtered_version_kiali
 echo "cluster_mode="$cluster_mode
 
 pretask(){
+    echo "start pretask() .."
+    echo $FOLDER_PATH_download
     # download istio
     if [ -z "$(ls -A "$FOLDER_PATH_download" 2>/dev/null)" ]; then
         echo "start istio download"
