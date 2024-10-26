@@ -42,7 +42,7 @@ spec:
             value: 1  
   values:
     global:
-      variant: debug
+      variant: debug   
       meshID: mesh1
       multiCluster:
         clusterName: cluster1
