@@ -34,3 +34,4 @@ k1 -n sample exec -it helloworld-v1-77cb56d4b4-svsnl -- curl -s helloworld.sampl
 k1 -n sample exec -it helloworld-v1-77cb56d4b4-svsnl -- curl -s -H "X-User: abc" helloworld.sample3.svc.cluster.local:5000/hello
 
 ### others
+kubectl patch svc istio-ingressgateway -n istio-system -p '{"spec": {"type": "LoadBalancer"}}'
