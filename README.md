@@ -7,9 +7,11 @@ istioctl  --context kind-c1 dashboard prometheus
 http://localhost:9090/api/v1/label/__name__/values
 
 ## helm install/upgrade/uninstall
-> helm install    --kube-context=kind-c1  --namespace=istio-system --create-namespace kiali-operator-1  kiali-operator/
-> helm upgrade    --kube-context=kind-c1  --namespace=istio-system --create-namespace kiali-operator-1  kiali-operator/
-> helm uninstall  --kube-context=kind-c1  --namespace istio-system  kiali-operator-1 
+```
+helm install    --kube-context=kind-c1  --namespace=istio-system --create-namespace kiali-operator-1  kiali-operator/
+helm upgrade    --kube-context=kind-c1  --namespace=istio-system --create-namespace kiali-operator-1  kiali-operator/
+helm uninstall  --kube-context=kind-c1  --namespace istio-system  kiali-operator-1 
+```
 
 ## docker build
 docker build -t quay.io/kiali/kiali:v1.49.0-2 .
