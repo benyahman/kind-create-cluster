@@ -131,3 +131,7 @@ cr:
     server:
       profiler:
         enabled: true
+    # external_services:
+    #   prometheus:
+    #     # Prometheus service name is "metrics" and is in the "telemetry" namespace
+    #     url: "http://172.18.0.101:9090/"
