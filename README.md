@@ -54,15 +54,15 @@ docker network inspect -f '{{.IPAM.Config}}' kind
 curl 172.18.0.100
 ```
 
-## clusterloader2
+## perf-tests/clusterloader2
 install gvm
 ```
 sudo apt-get install bison
 bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
 gvm install go1.15.12
 gvm use go1.15.12
+go run cmd/clusterloader.go --testconfig=config.yaml --provider=kind --kubeconfig=${HOME}/.kube/config --v=2
 ```
-
 remove gvm
 ```
 rm -rf ~/.gvm
