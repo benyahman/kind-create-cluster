@@ -54,6 +54,23 @@ docker network inspect -f '{{.IPAM.Config}}' kind
 curl 172.18.0.100
 ```
 
+## clusterloader2
+install gvm
+```
+sudo apt-get install bison
+bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+gvm install go1.15.12
+gvm use go1.15.12
+```
+
+remove gvm
+```
+rm -rf ~/.gvm
+vim ~/.bashrc 
+search keywords(gvm) and remove [[ -s "$GVM_ROOT/scripts/gvm" ]] && source "$GVM_ROOT/scripts/gvm"
+source ~/.bashrc  
+```
+
 ## others
 ```
 kubectl patch svc istio-ingressgateway -n istio-system -p '{"spec": {"type": "LoadBalancer"}}'
