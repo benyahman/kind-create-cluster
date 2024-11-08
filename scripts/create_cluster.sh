@@ -7,6 +7,7 @@ source $abspath/config/config.env
 echo "start pretask() .."
 echo "kind version="$kind_version
 echo "istio version="$istio_version
+echo "istio label="$istio_label
 echo "kiali version="$kiali_version
 echo "filtered_version_kiali version="$filtered_version_kiali
 echo "cluster_mode="$cluster_mode
