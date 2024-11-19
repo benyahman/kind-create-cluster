@@ -71,6 +71,31 @@ search keywords(gvm) and remove [[ -s "$GVM_ROOT/scripts/gvm" ]] && source "$GVM
 source ~/.bashrc  
 ```
 
+## switch mode (sidecar/ambient)
+開啟 ambient mode (namespace level)
+```
+k1 label ns sample istio.io/dataplane-mode=ambient
+k1 label ns sample istio.io/use-waypoint=waypoint
+k1 -n sample apply -f waypoint-gateway.yaml
+```
+關閉 ambient mode (namespace level)
+```
+k1 label ns sample istio.io/dataplane-mode-
+k1 label ns sample istio.io/use-waypoint-
+k1 -n sample delete -f waypoint-gateway.yaml
+k1 -n sample delete po --all
+```
+開啟 sidecar mode (namespace level)
+```
+k1 label ns sample istio.io/rev=1-24-0
+k1 -n sample delete po --all
+```
+關閉 sidecar mode (namespace level)
+```
+k1 label ns sample istio.io/rev-
+k1 -n sample delete po --all
+```
+
 ## others
 ```
 kubectl patch svc istio-ingressgateway -n istio-system -p '{"spec": {"type": "LoadBalancer"}}'

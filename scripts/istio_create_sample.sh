@@ -12,7 +12,7 @@ main_task(){
   if [[ "$cluster_mode" == "multi"  ]]; then
       kubectl create --context="${CTX_CLUSTER1}" namespace sample
       kubectl label --context="${CTX_CLUSTER1}" namespace sample \
-          istio-injection=enabled
+           istio.io/rev=$istio_label
       kubectl apply --context="${CTX_CLUSTER1}" \
           -f $FOLDER_PATH_istio/samples/helloworld/helloworld.yaml \
           -l service=helloworld -n sample
@@ -25,7 +25,7 @@ main_task(){
 
       kubectl create --context="${CTX_CLUSTER2}" namespace sample
       kubectl label --context="${CTX_CLUSTER2}" namespace sample \
-          istio-injection=enabled
+           istio.io/rev=$istio_label
       kubectl apply --context="${CTX_CLUSTER2}" \
           -f $FOLDER_PATH_istio/samples/helloworld/helloworld.yaml \
           -l service=helloworld -n sample
@@ -58,7 +58,7 @@ main_task(){
   elif [[ "$cluster_mode" == "single" ]]; then
       kubectl create --context="${CTX_CLUSTER1}" namespace sample
       kubectl label --context="${CTX_CLUSTER1}" namespace sample \
-          istio-injection=enabled
+           istio.io/rev=$istio_label
       kubectl apply --context="${CTX_CLUSTER1}" \
           -f $FOLDER_PATH_istio/samples/helloworld/helloworld.yaml \
           -l service=helloworld -n sample

@@ -1,7 +1,7 @@
 apiVersion: networking.istio.io/v1
 kind: DestinationRule
 metadata:
-  name: hellodr
+  name: dr-consistenthash
 spec:
   host: helloworld.sample3.svc.cluster.local
   trafficPolicy:

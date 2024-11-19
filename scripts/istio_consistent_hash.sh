@@ -7,7 +7,7 @@ source $abspath/config/config.env
 main_task(){   
     kubectl create --context="${CTX_CLUSTER1}" namespace sample3
     kubectl label --context="${CTX_CLUSTER1}" namespace sample3 \
-        istio-injection=enabled
+        istio.io/rev=$istio_label
     kubectl apply --context="${CTX_CLUSTER1}" \
         -f $FOLDER_PATH_istio/samples/helloworld/helloworld.yaml \
         -l service=helloworld -n sample3
@@ -20,9 +20,9 @@ main_task(){
     kubectl --context="${CTX_CLUSTER1}"  scale deployment helloworld-v1 --replicas=2 -n sample3
     
     if [[ "$istio_version" == "1.13.5" ]]; then
-        kubectl --context=$CTX_CLUSTER1 -n sample3 apply -f  $FOLDER_PATH_samples/consistent_dr_v1_13_5.yaml
+        kubectl --context=$CTX_CLUSTER1 -n sample3 apply -f  $FOLDER_PATH_samples/network/consistent_dr_v1_13_5.yaml
     else
-        kubectl --context=$CTX_CLUSTER1 -n sample3 apply -f  $FOLDER_PATH_samples/consistent_dr_v1_23_0.yaml
+        kubectl --context=$CTX_CLUSTER1 -n sample3 apply -f  $FOLDER_PATH_samples/network/consistent_dr_v1_23_0.yaml
     fi
 }
 
