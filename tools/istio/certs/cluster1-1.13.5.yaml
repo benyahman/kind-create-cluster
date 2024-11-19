@@ -4,6 +4,7 @@ spec:
   profile: default
   revision: 1-13-5
   meshConfig:
+    accessLogFile: /dev/stdout
     defaultConfig:
       holdApplicationUntilProxyStarts: true
   components:
