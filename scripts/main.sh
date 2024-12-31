@@ -7,12 +7,12 @@ source $abspath/config/config.env
 
 main_task(){
     bash $abspath/scripts/create_cluster.sh
-    # bash $abspath/scripts/install_kiali.sh
-    # bash $abspath/scripts/install_prom.sh
+    bash $abspath/scripts/install_kiali.sh
+    bash $abspath/scripts/install_prom.sh
     bash $abspath/scripts/istio_create_sample.sh
     # bash $abspath/scripts/istio_consistent_hash.sh
     # bash $abspath/scripts/metallb.sh
-    bash $abspath/scripts/mesh.sh
+    # bash $abspath/scripts/mesh.sh
 }
 
 clear(){
