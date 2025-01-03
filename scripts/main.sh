@@ -10,6 +10,7 @@ main_task(){
     bash $abspath/scripts/install_kiali.sh
     bash $abspath/scripts/install_prom.sh
     bash $abspath/scripts/istio_create_sample.sh
+    bash $abspath/scripts/deploy-nginx.sh
     # bash $abspath/scripts/istio_consistent_hash.sh
     # bash $abspath/scripts/metallb.sh
     # bash $abspath/scripts/mesh.sh
